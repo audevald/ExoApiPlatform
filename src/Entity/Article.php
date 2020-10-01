@@ -61,10 +61,22 @@ class Article
     private $publishedAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups("read")
      */
     private $updatedAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups("read")
+     */
+    private $createdAt;
+
+    public function __construct()
+    {
+        $this->isPublished = false;
+        $this->createdAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -151,6 +163,18 @@ class Article
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
