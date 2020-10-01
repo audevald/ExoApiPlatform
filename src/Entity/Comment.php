@@ -20,20 +20,28 @@ class Comment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("comment:read")
+     * @Groups({"comment:read", "read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"comment:read", "comment:write"})
+     * @Groups({"comment:read", "comment:write", "read"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"comment:read", "read"})
      */
     private $createdAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Article::class, inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups("comment:write")
+     */
+    private $article;
 
     public function __construct()
     {
@@ -65,6 +73,18 @@ class Comment
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getArticle(): ?Article
+    {
+        return $this->article;
+    }
+
+    public function setArticle(?Article $article): self
+    {
+        $this->article = $article;
 
         return $this;
     }
