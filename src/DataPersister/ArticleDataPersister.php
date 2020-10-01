@@ -2,6 +2,7 @@
 
 namespace App\DataPersister;
 
+use App\Entity\Tag;
 use App\Entity\Article;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -50,7 +51,19 @@ class ArticleDataPersister implements ContextAwareDataPersisterInterface {
         if ($this->request->getMethod() !== 'POST') {
             $data->setUpdatedAt(new \DateTime());
         }
-        
+        $tagRepository = $this->em->getRepository(Tag::class);
+        foreach($data->getTags() as $tag) {
+            $t = $tagRepository->findOneByLabel($tag->getLabel());
+
+            // Si le tag existe on ne le persiste pas
+            if ($t !== null) {
+                $data->removeTag($tag);
+                $data->addTag($t);
+            } else {
+                $this->em->persist($tag);
+            }
+        }
+
         $this->em->persist($data);
         $this->em->flush();
     }
